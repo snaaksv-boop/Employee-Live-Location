@@ -99,17 +99,30 @@ export default function App() {
 
   // Employee CRUD handlers
   const handleAddEmployee = async (data: Partial<Employee>) => {
-    await api.createEmployee(data);
+    const res = await api.createEmployee(data);
+    if (res?.employee) {
+      setEmployees((prev) => [res.employee, ...prev.filter((e) => e.id !== res.employee.id)]);
+    }
     await loadData();
+    return res?.employee;
   };
 
   const handleUpdateEmployee = async (id: string, data: Partial<Employee>) => {
-    await api.updateEmployee(id, data);
+    const res = await api.updateEmployee(id, data);
+    if (res?.employee) {
+      setEmployees((prev) => prev.map((e) => (e.id === id ? res.employee : e)));
+    }
     await loadData();
+    return res?.employee;
   };
 
   const handleDeactivateEmployee = async (id: string) => {
     await api.deactivateEmployee(id);
+    setEmployees((prev) =>
+      prev.map((e) =>
+        e.id === id ? { ...e, status: 'inactive', isTracking: false, isOnline: false } : e
+      )
+    );
     await loadData();
   };
 

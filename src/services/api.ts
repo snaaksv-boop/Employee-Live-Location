@@ -44,6 +44,10 @@ export const api = {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(data),
     });
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err.error || 'Failed to create employee');
+    }
     return res.json();
   },
 
@@ -53,11 +57,19 @@ export const api = {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(data),
     });
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err.error || 'Failed to update employee');
+    }
     return res.json();
   },
 
   async deactivateEmployee(id: string): Promise<{ success: boolean }> {
     const res = await fetch(`/api/employees/${id}`, { method: 'DELETE' });
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err.error || 'Failed to deactivate employee');
+    }
     return res.json();
   },
 
